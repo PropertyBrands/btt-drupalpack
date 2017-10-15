@@ -57,9 +57,13 @@ It's *that* simple.
 ## Front End Usage
 
 ### Per Component Assets
-DrupalPack automatically scans for compiled JS/CSS files which match any theme_hook_suggestions for a given template.
-This means that we can automatically decompose our script and style resources *per component*. When architected correctly
-the result is a dramatic reduction in unused assets.
+DrupalPack automatically scans for compiled JS/CSS files which match any `theme_hook_suggestions` for a given template.
+This means that we can automatically decompose our script and style resources *per component*. When architected correctly,
+the result is a dramatic reduction in unused assets. To leverage this functionality, simply match the name of a
+`theme_hook_suggestion` with the name of a CSS/JS output file from webpack, examples:
+
+* Load a particular JS file for all views-exposed-forms: `./sites/all/modules/custom/my_custom_module/views-exposed-form.js`
+* Load a particular CSS file for all views-exposed-forms: `./sites/all/modules/custom/my_custom_module/views-exposed-form.scss`
 
 ### Global Assets
 By default, any file named `index.js` in your project will be included on every page. It is important to make sure
