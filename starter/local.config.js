@@ -16,9 +16,9 @@ const localConfig = {
   devServer: {
     proxy: {
       '**': {
-        target: 'http://api.dev:8888',
+        target: 'http://MYVHOST.test',
         headers: {
-          host: 'api.dev:8888',
+          host: 'MYVHOST.test',
         },
       },
     },
