@@ -78,3 +78,10 @@ the result is a dramatic reduction in unused assets. To leverage this functional
 ### Global Assets
 By default, any file named `index.js` in your project will be included on every page. It is important to make sure
 any assets in these files are genuinely used on every page.
+
+### Caveats, issues
+The biggest caveat here is that your site assets managed with webpack are not part of the version control system. They
+are managed with public/static files. This means that building the static assets should be done during deployment.
+
+Webpack occasionally creates very large files with complicated dependency structures. Make sure to tweak the webpack
+configs and/or extend them to generate much smaller files. **PRs welcome!**
