@@ -24,7 +24,7 @@ To use the tool you need to first make sure  `pulic://webpack/` is installed and
 ```bash
 mkdir -p sites/default/files/webpack
 ```
-Once you have verified the installation of the public files folder for the webpack assets you can install the nodeN
+Once you have verified the installation of the public files folder for the webpack assets you can install the Node
 packages required for building/deving.
 
 ```bash
@@ -51,6 +51,14 @@ might look like:
   }
 }
 ```
+
+Once you are satisfied with your local configuration options run:
+
+```bash
+npm run dev
+```
+
+This will get you off and running with hot reload included.
 
 It's *that* simple.
 
