@@ -1,0 +1,3 @@
+name = DrupalPack
+description = Provides a boilerplate for utilizting Webpack to deliver component base interfaces.
+core = 7.x

@@ -1,0 +1,72 @@
+<?php
+/**
+ * Provide default hook implementations and other code for webpack
+ * delivered assets.
+ */
+
+/**
+ * The place where generated files will be written.
+ */
+define('DRUPALPACK_DIR', 'public://webpack');
+
+/**
+ * Implements hook_page_alter().
+ *
+ * This hook implementation serves as the merge point for all default (i.e. index.js)
+ * scripts. Modules which define a file named index.js will have this file included
+ * on all page loads by default.
+ *
+ * @param $page array
+ *  A renderable array representing the current page.
+ *
+ */
+function drupalpack_page_alter(&$page) {
+  if(!is_dir('public://webpack')) {
+    watchdog(
+      'drupalpack',
+      'Missing @w public files dir',
+      array('@w' => 'Webpack'),
+      WATCHDOG_WARNING
+    );
+    return;
+  }
+
+  $files = file_scan_directory('public://webpack', '/.*\.js$/', array('recurse' => TRUE));
+  foreach($files as $uri => $file) {
+    $info = pathinfo($uri);
+    if($info['basename'] === 'index.js' || $info['basename']) {
+      $page['footer']['#attached']['js'][] = array(
+        'data' => file_create_url($uri),
+        'scope' => 'footer',
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess().
+ * 
+ * Preprocess all theme function to scan for JS files to include.
+ * 
+ * @param $variables
+ */
+function drupalpack_preprocess(&$variables) {
+  $scripts[$variables['theme_hook_original']] = array();
+  $hooks = array_merge(
+    array($variables['theme_hook_original']),
+    $variables['theme_hook_suggestions']
+  );
+  foreach($hooks as $hook) {
+    $filename = str_replace('_', '-', $hook);
+    $files = file_scan_directory('public://webpack', "/$filename.js$/");
+    foreach(array_keys($files) as $uri) {
+      $scripts[$variables['theme_hook_original']][] = file_create_url($uri);
+    }
+  }
+  foreach($scripts[$variables['theme_hook_original']] as $script) {
+    drupal_add_js($script, array(
+      'type' => 'file',
+      'scope' => 'footer',
+    ));
+  }
+}
