@@ -62,8 +62,10 @@ This means that we can automatically decompose our script and style resources *p
 the result is a dramatic reduction in unused assets. To leverage this functionality, simply match the name of a
 `theme_hook_suggestion` with the name of a CSS/JS output file from webpack, examples:
 
-* Load a particular JS file for all views-exposed-forms: `./sites/all/modules/custom/my_custom_module/views-exposed-form.js`
-* Load a particular CSS file for all views-exposed-forms: `./sites/all/modules/custom/my_custom_module/views-exposed-form.scss`
+* Load a particular JS file for all views-exposed-forms: 
+  `./sites/all/modules/custom/my_custom_module/views-exposed-form.js`
+* Load a particular CSS file for all views-exposed-forms: 
+  `./sites/all/modules/custom/my_custom_module/views-exposed-form.scss`
 
 ### Global Assets
 By default, any file named `index.js` in your project will be included on every page. It is important to make sure
