@@ -1,4 +1,4 @@
-#DrupalPack
+# DrupalPack
 
 This module provides a starter pack for building sophisticated front end applications in Drupal 7. It has 
 the following features:
