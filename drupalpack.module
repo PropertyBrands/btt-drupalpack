@@ -31,10 +31,10 @@ function drupalpack_page_alter(&$page) {
     return;
   }
 
-  $files = file_scan_directory('public://webpack', '/.*\.js$/', array('recurse' => TRUE));
+  $files = file_scan_directory(DRUPALPACK_DIR, '/.*\.js$/', array('recurse' => TRUE));
   foreach($files as $uri => $file) {
     $info = pathinfo($uri);
-    if($info['basename'] === 'index.js' || $info['basename']) {
+    if($info['basename'] === 'index.js') {
       $page['footer']['#attached']['js'][] = array(
         'data' => file_create_url($uri),
         'scope' => 'footer',
@@ -46,27 +46,45 @@ function drupalpack_page_alter(&$page) {
 /**
  * Implements hook_preprocess().
  * 
- * Preprocess all theme function to scan for JS files to include.
+ * Preprocess all theme function to scan for CSS/JS files to include.
  * 
  * @param $variables
  */
 function drupalpack_preprocess(&$variables) {
   $scripts[$variables['theme_hook_original']] = array();
+  $styles[$variables['theme_hook_original']] = array();
   $hooks = array_merge(
     array($variables['theme_hook_original']),
     $variables['theme_hook_suggestions']
   );
   foreach($hooks as $hook) {
     $filename = str_replace('_', '-', $hook);
-    $files = file_scan_directory('public://webpack', "/$filename.js$/");
+
+    // Get component level JS
+    $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.js$/");
     foreach(array_keys($files) as $uri) {
       $scripts[$variables['theme_hook_original']][] = file_create_url($uri);
     }
+
+    // Get component leval CSS
+    $filename = str_replace('_', '-', $hook);
+    $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.css$/");
+    foreach(array_keys($files) as $uri) {
+      $styles[$variables['theme_hook_original']][] = file_create_url($uri);
+    }
   }
+
   foreach($scripts[$variables['theme_hook_original']] as $script) {
     drupal_add_js($script, array(
       'type' => 'file',
       'scope' => 'footer',
+    ));
+  }
+
+  foreach($styles[$variables['theme_hook_original']] as $style) {
+    drupal_add_css($style, array(
+      'type' => 'file',
+      'scope' => CSS_THEME,
     ));
   }
 }
