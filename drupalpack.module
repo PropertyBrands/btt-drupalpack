@@ -67,7 +67,6 @@ function drupalpack_preprocess(&$variables) {
     }
 
     // Get component leval CSS
-    $filename = str_replace('_', '-', $hook);
     $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.css$/");
     foreach(array_keys($files) as $uri) {
       $styles[$variables['theme_hook_original']][] = file_create_url($uri);
@@ -78,6 +77,7 @@ function drupalpack_preprocess(&$variables) {
     drupal_add_js($script, array(
       'type' => 'file',
       'scope' => 'footer',
+      'weight' => JS_LIBRARY,
     ));
   }
 
