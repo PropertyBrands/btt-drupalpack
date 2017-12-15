@@ -35,9 +35,10 @@ function drupalpack_page_alter(&$page) {
   foreach($files as $uri => $file) {
     $info = pathinfo($uri);
     if($info['basename'] === 'index.js') {
-      $page['footer']['#attached']['js'][] = array(
+      $page['header']['#attached']['js'][] = array(
         'data' => file_create_url($uri),
         'scope' => 'footer',
+        'weight' => -9999,
       );
     }
   }
