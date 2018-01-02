@@ -70,7 +70,7 @@ function drupalpack_preprocess(&$variables) {
     // Get component leval CSS
     $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.css$/");
     foreach(array_keys($files) as $uri) {
-      $styles[$variables['theme_hook_original']][] = file_create_url($uri);
+      $styles[$variables['theme_hook_original']][] = $uri;
     }
   }
 
