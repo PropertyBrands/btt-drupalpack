@@ -1,11 +1,11 @@
 # DrupalPack
 
-This module provides a starter pack for building sophisticated front end applications in Drupal 7. It has 
+This module provides a starter pack for building sophisticated front end applications in Drupal 7. It has
 the following features:
 
 * ES2015 Transpilation with Babel
 * SCSS compilation
-* Support for Vue 
+* Support for Vue
 * Hot module reloading
 * Component level front end assets for Drupal
 
@@ -70,13 +70,13 @@ This means that we can automatically decompose our script and style resources *p
 the result is a dramatic reduction in unused assets. To leverage this functionality, simply match the name of a
 `theme_hook_suggestion` with the name of a CSS/JS output file from webpack, examples:
 
-* Load a particular JS file for all views-exposed-forms: 
+* Load a particular JS file for all views-exposed-forms:
   `./sites/all/modules/custom/my_custom_module/views-exposed-form.js`
-* Load a particular CSS file for all views-exposed-forms: 
+* Load a particular CSS file for all views-exposed-forms:
   `./sites/all/modules/custom/my_custom_module/views-exposed-form.scss`
 
 ### Global Assets
-By default, any file named `index.js` in your project will be included on every page. It is important to make sure
+By default, any file named `app.js` or `app.scss` in your project will be included on every page. It is important to make sure
 any assets in these files are genuinely used on every page.
 
 ## Caveats, issues
