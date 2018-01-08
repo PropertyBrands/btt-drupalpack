@@ -31,13 +31,20 @@ function drupalpack_page_alter(&$page) {
     return;
   }
 
-  $files = file_scan_directory(DRUPALPACK_DIR, '/.*\.js$/', array('recurse' => TRUE));
+  $files = file_scan_directory(DRUPALPACK_DIR, '/.*\.js|,*\.css$/', array('recurse' => TRUE));
   foreach($files as $uri => $file) {
     $info = pathinfo($uri);
-    if($info['basename'] === 'index.js') {
+    if($info['basename'] === 'app.js') {
       $page['header']['#attached']['js'][] = array(
         'data' => file_create_url($uri),
         'scope' => 'footer',
+        'weight' => -9999,
+      );
+    }
+    if($info['basename'] === 'app.css') {
+      $page['header']['#attached']['css'][] = array(
+        'data' => $uri,
+        'type' => 'file',
         'weight' => -9999,
       );
     }
@@ -46,9 +53,9 @@ function drupalpack_page_alter(&$page) {
 
 /**
  * Implements hook_preprocess().
- * 
+ *
  * Preprocess all theme function to scan for CSS/JS files to include.
- * 
+ *
  * @param $variables
  */
 function drupalpack_preprocess(&$variables) {
