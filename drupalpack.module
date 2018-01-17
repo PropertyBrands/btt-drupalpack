@@ -7,8 +7,13 @@
 /**
  * The place where generated files will be written.
  */
-define('DRUPALPACK_DIR', 'public://webpack');
-
+function drupalpack_get_destination_dir() {
+  $active_theme = variable_get('theme_default', 'bartik');
+  if(is_dir(drupal_get_path('theme', $active_theme) . '/dist')) {
+    return drupal_get_path('theme', $active_theme) . '/dist';
+  }
+  return FALSE;
+}
 /**
  * Implements hook_page_alter().
  *
@@ -21,17 +26,17 @@ define('DRUPALPACK_DIR', 'public://webpack');
  *
  */
 function drupalpack_page_alter(&$page) {
-  if(!is_dir('public://webpack')) {
+  if(!$dir = drupalpack_get_destination_dir()) {
     watchdog(
       'drupalpack',
-      'Missing @w public files dir',
+      'Missing @w destination files dir',
       array('@w' => 'Webpack'),
       WATCHDOG_WARNING
     );
     return;
   }
 
-  $files = file_scan_directory(DRUPALPACK_DIR, '/.*\.js|,*\.css$/', array('recurse' => TRUE));
+  $files = file_scan_directory($dir, '/.*\.js|,*\.css$/', array('recurse' => TRUE));
   foreach($files as $uri => $file) {
     $info = pathinfo($uri);
     if($info['basename'] === 'app.js') {
@@ -65,17 +70,18 @@ function drupalpack_preprocess(&$variables) {
     array($variables['theme_hook_original']),
     $variables['theme_hook_suggestions']
   );
+  $dir = drupalpack_get_destination_dir();
   foreach($hooks as $hook) {
     $filename = str_replace('_', '-', $hook);
 
     // Get component level JS
-    $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.js$/");
+    $files = file_scan_directory($dir, "/$filename.js$/");
     foreach(array_keys($files) as $uri) {
       $scripts[$variables['theme_hook_original']][] = file_create_url($uri);
     }
 
     // Get component leval CSS
-    $files = file_scan_directory(DRUPALPACK_DIR, "/$filename.css$/");
+    $files = file_scan_directory($dir, "/$filename.css$/");
     foreach(array_keys($files) as $uri) {
       $styles[$variables['theme_hook_original']][] = $uri;
     }
