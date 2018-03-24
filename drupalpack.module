@@ -69,6 +69,7 @@ function drupalpack_preprocess(&$variables) {
     $cache = cache_get(__FUNCTION__);
     $hookdata = $cache ? $cache->data ?: [] : [];
   }
+  $updatecache = FALSE;
   $scripts[$variables['theme_hook_original']] = array();
   $styles[$variables['theme_hook_original']] = array();
   $hooks = array_merge(
@@ -94,11 +95,15 @@ function drupalpack_preprocess(&$variables) {
       }
       $updatecache = TRUE;
     }
-    foreach($hookdata[$hook]['scripts'] as $scr) {
-      $scripts[$variables['theme_hook_original']][] = $scr;
+    if(!empty($hookdata[$hook]['scripts'])) {
+      foreach($hookdata[$hook]['scripts'] as $scr) {
+        $scripts[$variables['theme_hook_original']][] = $scr;
+      }
     }
-    foreach($hookdata[$hook]['styles'] as $scr) {
-      $styles[$variables['theme_hook_original']][] = $scr;
+    if(!empty($hookdata[$hook]['styles'])) {
+      foreach ($hookdata[$hook]['styles'] as $scr) {
+        $styles[$variables['theme_hook_original']][] = $scr;
+      }
     }
   }
   if($updatecache) {
