@@ -64,6 +64,12 @@ function drupalpack_page_alter(&$page) {
  * @param $variables
  */
 function drupalpack_preprocess(&$variables) {
+  $hookdata =& drupal_static(__FUNCTION__);
+  if(!$hookdata) {
+    $cache = cache_get(__FUNCTION__);
+    $hookdata = $cache ? $cache->data ?: [] : [];
+  }
+  $updatecache = FALSE;
   $scripts[$variables['theme_hook_original']] = array();
   $styles[$variables['theme_hook_original']] = array();
   $hooks = array_merge(
@@ -72,19 +78,36 @@ function drupalpack_preprocess(&$variables) {
   );
   $dir = drupalpack_get_destination_dir();
   foreach($hooks as $hook) {
-    $filename = str_replace('_', '-', $hook);
+    if(!isset($hookdata[$hook])) {
+      $hookdata[$hook] = [];
+      $filename = str_replace('_', '-', $hook);
 
-    // Get component level JS
-    $files = file_scan_directory($dir, "/$filename.js$/");
-    foreach(array_keys($files) as $uri) {
-      $scripts[$variables['theme_hook_original']][] = file_create_url($uri);
-    }
+      // Get component level JS
+      $files = file_scan_directory($dir, "/$filename.js$/");
+      foreach(array_keys($files) as $uri) {
+        $hookdata[$hook]['scripts'][] = file_create_url($uri);
+      }
 
-    // Get component leval CSS
-    $files = file_scan_directory($dir, "/$filename.css$/");
-    foreach(array_keys($files) as $uri) {
-      $styles[$variables['theme_hook_original']][] = $uri;
+      // Get component leval CSS
+      $files = file_scan_directory($dir, "/$filename.css$/");
+      foreach(array_keys($files) as $uri) {
+        $hookdata[$hook]['styles'][] = $uri;
+      }
+      $updatecache = TRUE;
     }
+    if(!empty($hookdata[$hook]['scripts'])) {
+      foreach($hookdata[$hook]['scripts'] as $scr) {
+        $scripts[$variables['theme_hook_original']][] = $scr;
+      }
+    }
+    if(!empty($hookdata[$hook]['styles'])) {
+      foreach ($hookdata[$hook]['styles'] as $scr) {
+        $styles[$variables['theme_hook_original']][] = $scr;
+      }
+    }
+  }
+  if($updatecache) {
+    cache_set(__FUNCTION__, $hookdata, 'cache', CACHE_TEMPORARY);
   }
 
   foreach($scripts[$variables['theme_hook_original']] as $script) {
