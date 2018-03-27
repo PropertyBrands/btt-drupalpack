@@ -8,8 +8,9 @@
  * The place where generated files will be written.
  */
 function drupalpack_get_destination_dir() {
+  global $theme;
   $active_theme = variable_get('theme_default', 'bartik');
-  if(is_dir(drupal_get_path('theme', $active_theme) . '/dist')) {
+  if(is_dir(drupal_get_path('theme', $active_theme) . '/dist') && ($theme === $active_theme)) {
     return drupal_get_path('theme', $active_theme) . '/dist';
   }
   return FALSE;
@@ -35,22 +36,19 @@ function drupalpack_page_alter(&$page) {
     );
     return;
   }
-
+  
   $files = file_scan_directory($dir, '/.*\.js|,*\.css$/', array('recurse' => TRUE));
   foreach($files as $uri => $file) {
     $info = pathinfo($uri);
     if($info['basename'] === 'app.js') {
-      $page['header']['#attached']['js'][] = array(
+      $page['footer']['#attached']['js'][] = array(
         'data' => file_create_url($uri),
-        'scope' => 'footer',
-        'weight' => -9999,
       );
     }
     if($info['basename'] === 'app.css') {
       $page['header']['#attached']['css'][] = array(
         'data' => $uri,
         'type' => 'file',
-        'weight' => -9999,
       );
     }
   }
@@ -90,7 +88,6 @@ function drupalpack_preprocess(&$variables) {
   foreach($scripts[$variables['theme_hook_original']] as $script) {
     drupal_add_js($script, array(
       'type' => 'file',
-      'scope' => 'footer',
       'weight' => JS_LIBRARY,
     ));
   }
